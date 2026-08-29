@@ -10,8 +10,6 @@
   window.__BRAND__ = {
     name: 'La Terraza de Lupita by Mister Mechada',
     phone: '56990998900',
-    calyzzoName: 'Calyzzo Events & Pool',
-    calyzzoPhone: '56921944986',
     deliveryMin: 5000,
     deliveryZones: [
       { zone: 'Villa Hermosa', price: 1500 },
@@ -817,36 +815,25 @@
     });
   }
 
-  function buildCalyzzoQuoteUrl(service) {
+  function buildEventQuoteUrl(service) {
     var selectedService = cleanText(service || 'Por definir', 100);
     var lines = [
-      '[COTIZACION_CALYZZO_WEB]',
-      '✨ *SOLICITUD DE COTIZACIÓN*',
-      '*' + window.__BRAND__.calyzzoName + '*',
+      '✨ *CONSULTA DE EVENTO*',
+      '*' + window.__BRAND__.name + '*',
       'ORIGEN: PAGINA_WEB',
       'SERVICIO: ' + selectedService,
-      'CAPACIDAD_REFERENCIA: Hasta 75 personas',
-      'HORARIO_DIURNO_REFERENCIA: 10:00–19:00',
-      'HORARIO_NOCTURNO_REFERENCIA: 22:00–07:00',
-      'PRECIOS: Cotización personalizada',
       '',
-      'Quisiera conocer disponibilidad, condiciones y una propuesta para mi evento.',
-      '[/COTIZACION_CALYZZO_WEB]'
+      'Quisiera conocer disponibilidad, condiciones y una propuesta para mi evento.'
     ];
-    return 'https://wa.me/' + window.__BRAND__.calyzzoPhone + '?text=' + encodeURIComponent(lines.join('\n'));
+    return 'https://wa.me/' + window.__BRAND__.phone + '?text=' + encodeURIComponent(lines.join('\n'));
   }
 
   function initEventServices() {
-    var quote = $('#calyzzo-quote');
-    if (!quote) return;
-    var setService = function (service) {
-      quote.href = buildCalyzzoQuoteUrl(service);
-      quote.textContent = service ? 'Cotizar: ' + cleanText(service, 48) : 'Solicitar cotización';
-    };
-    setService('Por definir');
     $$('[data-event-service]').forEach(function (link) {
-      link.addEventListener('click', function () {
-        setService(link.dataset.eventService || 'Por definir');
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var service = link.dataset.eventService || 'Por definir';
+        window.open(buildEventQuoteUrl(service), '_blank');
       });
     });
   }
@@ -1150,17 +1137,13 @@
     var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduced) return;
 
-    // Hero parallax
+    // Hero fade-in
     safe(function () {
-      gsap.to('.hero__bg img', {
-        yPercent: 15,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.hero',
-          start: 'top top',
-          end: 'bottom top',
-          scrub: true
-        }
+      gsap.from('.hero__visual img', {
+        opacity: 0,
+        y: 20,
+        duration: 1,
+        ease: 'power2.out'
       });
     });
 
